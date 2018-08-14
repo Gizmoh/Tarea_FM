@@ -1,3 +1,5 @@
+#include <sdsl/suffix_trees.hpp>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <sdsl/construct.hpp>
@@ -7,37 +9,98 @@ using namespace std;
 using namespace std::chrono;
 using timer = std::chrono::high_resolution_clock;
 
-int main(int argc, char** argv)
-{
-    // Check Parameters
-    if (argc!=2) {
-        cout << "Usage: " << argv[0] << " file" << endl;
-        cout << " Computes the SA from file space efficiently." << endl;
-        cout << " Result is stored in `sa_<file>.sdsl`." << endl;
-        return 1;
+int PSI(){
+    
+}
+
+int LF(){
+
+}
+
+void comparePWithSuffix(i,P,PSI,bit_vector Bc,char []Chars){}
+
+void SABinarySearchPSI(P,PSI,bit_vector Bc,char []Chars,int *Sp,int *Ep){
+    //n es igual al largo del bitvector
+    int b,t,n,s,e;
+    b = 1;
+    t = ;
+    while (b<t){
+        s = floor((b+t)/2);
+        if(comparePWithSuffix(s,P,PSI,Bc,Chars)==">") b = s+1;
+        else t = s;
     }
+    e = b-1;
+    t = n;
+    while(e < t){
+        s = floor((e+t)/2);
+        if(comparePWithSuffix(s,P,PSI,Bc,Chars)=="=") b = s+1;
+        else t = e-1;
+    }
+    *Sp = b;
+    *Ep = e;
+}
 
-    cache_config config(false, ".", util::basename(argv[1]));
+void BackwardLF(P,LF,bit_vector Bc, char []Chars,int *Sp,int *Ep){
+    int m,r,b,e,k;
+    m = P.length();
+    bit_vector::select_1_type Bc_Sel1(&Bc);
+    rank_support_v<1> rankBc_1(&Bc);
+    r = find(Chars,Chars.length(),P[m-1]);
+    b = Bc_Sel1(r);
+    e = Bc_Sel1(r+1)-1;
+    for(int i=m; i > 2; i--){
+        k = b;
+        j = LF(k);
+        while(Chars[rankBc_1(j)]!=P[i-1] and k<=e){
+            k = k+1;
+            j = LF(k);
+        }
+        b = k;
+        *Sp = k;
+        k = e;
+        j = LF(k);
+        while(Chars[rankBc_1(j)]!=P[i-1] and k>=b){
+            k = k-1;
+            j = LF(k);
+        }
+        e = k;
+        *Ep = k;
+        if(b<=e){
+            *Sp = LF(b);
+            *Ep = LF(e);
+        }
+    }
+}
 
-    int_vector<8> text;
-    load_vector_from_file(text, argv[1], 1);
-    append_zero_symbol(text);
-    auto n = text.size();
-    store_to_cache(text, conf::KEY_TEXT, config);
-    util::clear(text);
-
-    cout << "Calculate suffix array ... " << flush;
-    construct_config::byte_algo_sa = SE_SAIS; // or LIBDIVSUFSORT for less space-efficient but faster construction
-    memory_monitor::start();
-    auto start = timer::now();
-    construct_sa<8>(config);
-    auto stop = timer::now();
-    memory_monitor::stop();
-    cout << "done." << endl;
-    cout << "Construction needed:" << endl;
-    cout << duration_cast<seconds>(stop-start).count() << " seconds." << endl;
-    cout << memory_monitor::peak() << " bytes." << endl;
-    cout << (1.0*memory_monitor::peak())/n << " bytes per input byte." << endl;
-    sdsl::remove(cache_file_name(conf::KEY_TEXT, config));
-    return 0;
+int main()
+{
+    bit_vector Bc;
+    string file = "cere";
+    //store_to_file((const char*)v.c_str(), file);
+    cout<<"---------"<<endl;
+    cout << util::file_size(file) << endl;
+    cout<<"---------"<<endl;
+    cout<<"--------- construct csa_wt<> ----------"<<endl;
+    {
+        csa_wt<> csa;
+        construct(csa, file, 1);
+        cout << "csa.size()="<<csa.size()<<endl;
+        /*for (size_t i=0; i < csa.size(); ++i) {
+            cout << csa[i] << " ";
+        }
+        cout << endl;
+        for (size_t i=0; i < csa.size(); ++i) {
+            cout << csa.bwt[i] << " ";
+        }
+        cout << endl;
+        for (size_t i=0; i < csa.size(); ++i) {
+            cout << csa.psi[i] << " ";
+        }
+        cout << endl;
+        for (size_t i=0; i < csa.size(); ++i) {
+            cout << csa.lf[i] << " ";
+        }
+        cout << endl;*/
+    }
+    cout<<"---------"<<endl;
 }
