@@ -95,13 +95,10 @@ int main()
         eval = csa.bwt[0];
         Cr->push_back(csa.bwt[0]);
         Bc = new bit_vector(csa.size(),0);
-        /*for (size_t i=0; i < csa.size(); ++i) {
-            cout << csa[i] << " ";
-        }
-        cout << endl;*/
         for (size_t i=0; i < csa.size(); ++i) {
+            Psi[i] = csa.psi[i];
             if(eval!=csa.bwt[i]){
-                //Bc[i] = 1;
+                (*Bc)[i] = 1;
                 Cr->push_back(csa.bwt[i]);
                 eval = csa.bwt[i];
                 pointer = find(Cr->begin(),Cr->end(),csa.bwt[i]);
@@ -119,12 +116,7 @@ int main()
             }
             eval = csa.bwt[i];
             counter++;
-        }
-        cout << Cr->size() << endl;
-        cout << endl;/*
-        for (size_t i=0; i < csa.size(); ++i) {
-            cout << csa.psi[i] << " ";
-        }
+        }/*
         cout << endl;
         for (size_t i=0; i < csa.size(); ++i) {
             cout << csa.lf[i] << " ";
