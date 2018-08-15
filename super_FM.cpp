@@ -9,12 +9,22 @@ using namespace std;
 using namespace std::chrono;
 using timer = std::chrono::high_resolution_clock;
 
-/*int LF(){
 
+char comparePWithSuffix(int i, string P,int PSI[],bit_vector BSa,vector<char> Chars){
+    rank_support_v<1> rankBSa(&BSa);
+    int j = 1;
+    char c;
+    while (j < P.length()){
+        c = Chars[rankBSa(i)];
+        if(P[j] < c) return '<';
+        if(P[j] > c) return '>';
+        i = PSI[i];
+        j = j+1;
+    }
+    return '=';
 }
 
-void comparePWithSuffix(i,P,PSI,bit_vector Bc,char []Chars){}
-
+/*
 void SABinarySearchPSI(P,PSI,bit_vector Bc,char []Chars,int *Sp,int *Ep){
     //n es igual al largo del bitvector
     int b,t,n,s,e;
@@ -71,10 +81,13 @@ void BackwardLF(P,LF,bit_vector Bc, char []Chars,int *Sp,int *Ep){
 int main()
 {
     bit_vector *Bc; //Bit vector de cambio de letras
+    bit_vector * BSa; //Bit vector de SA
     vector<char> * Cr;  //vector de letras por run
+    vector<char> * ABC; //vector de alfabeto
     vector<int> * Ar;   //Arreglo de runs acumulados
     int * Psi;
-    string file = "Test.txt";
+    int * LastF;
+    string file = "LolTest.txt";
     //store_to_file((const char*)v.c_str(), file);
     cout<<"---------"<<endl;
     cout << util::file_size(file) << endl;
@@ -84,7 +97,9 @@ int main()
         csa_wt<> csa;
         Cr = new vector<char>;
         Ar = new vector<int>;
+        ABC = new vector<char>;
         char eval;
+        char eval2;
         vector<int> temp_AR;
         int counter = 0;
         int temp = 0;
@@ -92,11 +107,19 @@ int main()
         construct(csa, file, 1);
         cout << "csa.size()="<<csa.size()<<endl;
         Psi = new int [csa.size()];
+        LastF = new int [csa.size()];
         eval = csa.bwt[0];
+        eval2 = csa.text[csa[0]];
         Cr->push_back(csa.bwt[0]);
         Bc = new bit_vector(csa.size(),0);
+        BSa = new bit_vector(csa.size(),0);
         for (size_t i=0; i < csa.size(); ++i) {
             Psi[i] = csa.psi[i];
+            LastF[i] = csa.lf[i];
+            if(eval2!=csa.text[csa[i]]){
+                (*BSa)[i] = 1;
+                ABC->push_back(csa.text[csa[i]]);
+            }
             if(eval!=csa.bwt[i]){
                 (*Bc)[i] = 1;
                 Cr->push_back(csa.bwt[i]);
@@ -115,8 +138,10 @@ int main()
 
             }
             eval = csa.bwt[i];
+            eval2 = csa.text[csa[i]];
             counter++;
-        }/*
+        }
+        /*
         cout << endl;
         for (size_t i=0; i < csa.size(); ++i) {
             cout << csa.lf[i] << " ";
