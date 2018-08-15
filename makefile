@@ -7,9 +7,7 @@ LIB=$(SDSL_DIR)/lib/libsdsl.a $(SDSL_DIR)/lib/libdivsufsort.a $(SDSL_DIR)/lib/li
 all:build
 
 build:
-	#$(CC) $(CFLAGS) $(INCLUDES) -o FM super_FM.cpp $(LIB) -pg
-	#$(CC) $(CFLAGS) $(INCLUDES) -o TEST sa-int-construct-from-file.cpp $(LIB) -pg
-	$(CC) $(CFLAGS) $(INCLUDES) -o Test Testing.cpp $(LIB) -pg
+	$(CC) $(CFLAGS) $(INCLUDES) -o FM super_FM.cpp $(LIB) -pg
 
 
 

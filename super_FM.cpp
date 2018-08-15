@@ -9,11 +9,7 @@ using namespace std;
 using namespace std::chrono;
 using timer = std::chrono::high_resolution_clock;
 
-int PSI(){
-    
-}
-
-int LF(){
+/*int LF(){
 
 }
 
@@ -71,11 +67,14 @@ void BackwardLF(P,LF,bit_vector Bc, char []Chars,int *Sp,int *Ep){
         }
     }
 }
-
+*/
 int main()
 {
-    bit_vector Bc;
-    string file = "cere";
+    bit_vector *Bc; //Bit vector de cambio de letras
+    vector<char> * Cr;  //vector de letras por run
+    vector<int> * Ar;   //Arreglo de runs acumulados
+    int * Psi;
+    string file = "Test.txt";
     //store_to_file((const char*)v.c_str(), file);
     cout<<"---------"<<endl;
     cout << util::file_size(file) << endl;
@@ -83,16 +82,46 @@ int main()
     cout<<"--------- construct csa_wt<> ----------"<<endl;
     {
         csa_wt<> csa;
+        Cr = new vector<char>;
+        Ar = new vector<int>;
+        char eval;
+        vector<int> temp_AR;
+        int counter = 0;
+        int temp = 0;
+        vector<char>::iterator pointer;
         construct(csa, file, 1);
         cout << "csa.size()="<<csa.size()<<endl;
+        Psi = new int [csa.size()];
+        eval = csa.bwt[0];
+        Cr->push_back(csa.bwt[0]);
+        Bc = new bit_vector(csa.size(),0);
         /*for (size_t i=0; i < csa.size(); ++i) {
             cout << csa[i] << " ";
         }
-        cout << endl;
+        cout << endl;*/
         for (size_t i=0; i < csa.size(); ++i) {
-            cout << csa.bwt[i] << " ";
+            if(eval!=csa.bwt[i]){
+                //Bc[i] = 1;
+                Cr->push_back(csa.bwt[i]);
+                eval = csa.bwt[i];
+                pointer = find(Cr->begin(),Cr->end(),csa.bwt[i]);
+                temp = distance(Cr->begin(),pointer);
+                if(temp_AR.size()>temp){
+                    Ar->push_back(temp_AR[temp]);
+                    temp_AR[temp]+=counter;
+                }
+                else{
+                    Ar->push_back(0);
+                    temp_AR.push_back(counter);
+                }
+                counter = 0;
+
+            }
+            eval = csa.bwt[i];
+            counter++;
         }
-        cout << endl;
+        cout << Cr->size() << endl;
+        cout << endl;/*
         for (size_t i=0; i < csa.size(); ++i) {
             cout << csa.psi[i] << " ";
         }
@@ -102,5 +131,4 @@ int main()
         }
         cout << endl;*/
     }
-    cout<<"---------"<<endl;
 }
