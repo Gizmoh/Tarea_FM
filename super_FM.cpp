@@ -9,6 +9,17 @@ using namespace std;
 using namespace std::chrono;
 using timer = std::chrono::high_resolution_clock;
 
+/*
+int LF(int pos,vector<int> Ar,vector<int> Acum,bit_vector Bc,size_t rankBc, size_t selBc, vector<char> Cr,int LF[]){
+    vector<char>::iterator pointer = find(Cr.begin(),Cr.end(),Cr[rankBc]);
+    int temp = distance(Cr.begin(),pointer);
+    int Ari = Ar[rankBc];
+    int output = Acum[temp] + Ari + 1 + pos - selBc;
+    cout << temp << " " << Cr[temp] << endl;
+    //cout << LF[pos] << " " << output << " " << Ari << " " << pos << " " << Ar[rankBc] << " " << Acum[temp] <<endl;
+    return 0;
+}*/
+
 char comparePWithSuffix(int i, string P, int *PSI, bit_vector *BSa, vector<char> *Chars)
 {
     rank_support_v<1> rankBSa(&(*BSa));
