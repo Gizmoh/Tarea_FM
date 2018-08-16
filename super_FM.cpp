@@ -3,11 +3,12 @@
 #include <iostream>
 #include <fstream>
 #include <sdsl/construct.hpp>
+#include <math.h>
+#include "include/BasicCDS.h"
 
 using namespace sdsl;
 using namespace std;
-using namespace std::chrono;
-using timer = std::chrono::high_resolution_clock;
+using namespace cds;
 
 /*
 int LF(int pos,vector<int> Ar,vector<int> Acum,bit_vector Bc,size_t rankBc, size_t selBc, vector<char> Cr,int LF[]){
@@ -75,7 +76,7 @@ void BackwardLF(string P, int *LF, bit_vector *BSa, vector<char> *Chars, int &Sp
     vector<char>::iterator pointer = find(Chars->begin(), Chars->end(), P[m - 1]);
     bit_vector::select_1_type Bc_Sel1(&(*BSa));
     rank_support_v<1> rankBc_1(&(*BSa));
-    r = distance(Chars->begin(),pointer);
+    r = distance(Chars->begin(), pointer);
     b = Bc_Sel1(r);
     e = Bc_Sel1(r + 1) - 1;
     for (int i = m; i > 2; i--)
@@ -106,6 +107,31 @@ void BackwardLF(string P, int *LF, bit_vector *BSa, vector<char> *Chars, int &Sp
     Ep = e;
 }
 
+void testing(int largo, int *PSI, bit_vector *BSa, vector<char> *ABC, int &Sp, int &Ep, double &promPsi, double &promLF)
+{
+    string palabra;
+    int aux = ABC->size() - 1;
+    double t;
+    for (int i = 0; i < 100; i++)
+    {
+        palabra = "";
+        while (palabra.length() < largo)
+        {
+            palabra.push_back((*ABC)[rand() % aux]);
+            cout << palabra << " " << palabra.length();
+        }
+        t = getTime_ms();
+        SABinarySearchPSI(palabra, PSI, BSa, ABC, Sp, Ep);
+        promPsi += getTime_ms() - t;
+        t = getTime_ms();
+        BackwardLF(palabra, PSI, BSa, ABC, Sp, Ep);
+        promLF += getTime_ms() - t;
+    }
+    cout << endl;
+    promPsi = (promPsi / 100);
+    promLF = (promLF / 100);
+}
+
 int main()
 {
     bit_vector *Bc;    //Bit vector de cambio de letras
@@ -117,67 +143,66 @@ int main()
     int Ep = 0;        //End point
     int *Psi;
     int *LastF;
-    string file = "world_leaders";
-    //store_to_file((const char*)v.c_str(), file);
+    string file = "LolTest.txt";
+    csa_wt<> csa;
+    Cr = new vector<char>;
+    Ar = new vector<int>;
+    ABC = new vector<char>;
+    char eval;
+    char eval2;
+    vector<int> temp_AR;
+    int counter = 0;
+    int temp = 0;
+    vector<char>::iterator pointer;
+    construct(csa, file, 1);
+    Psi = new int[csa.size()];
+    LastF = new int[csa.size()];
+    eval = csa.bwt[0];
+    eval2 = csa.text[csa[0]];
+    Cr->push_back(csa.bwt[0]);
+    Bc = new bit_vector(csa.size(), 0);
+    BSa = new bit_vector(csa.size(), 0);
+    for (size_t i = 0; i < csa.size(); ++i)
     {
-        cout << "---------" << endl;
-        cout << util::file_size(file) << endl;
-        cout << "---------" << endl;
-        cout << "--------- construct csa_wt<> ----------" << endl;
-        csa_wt<> csa;
-        Cr = new vector<char>;
-        Ar = new vector<int>;
-        ABC = new vector<char>;
-        char eval;
-        char eval2;
-        vector<int> temp_AR;
-        int counter = 0;
-        int temp = 0;
-        vector<char>::iterator pointer;
-        construct(csa, file, 1);
-        cout << "csa.size()=" << csa.size() << endl;
-        Psi = new int[csa.size()];
-        LastF = new int[csa.size()];
-        eval = csa.bwt[0];
-        eval2 = csa.text[csa[0]];
-        Cr->push_back(csa.bwt[0]);
-        Bc = new bit_vector(csa.size(), 0);
-        BSa = new bit_vector(csa.size(), 0);
-        for (size_t i = 0; i < csa.size(); ++i)
+        Psi[i] = csa.psi[i];
+        LastF[i] = csa.lf[i];
+        if (eval2 != csa.text[csa[i]])
         {
-            Psi[i] = csa.psi[i];
-            LastF[i] = csa.lf[i];
-            if (eval2 != csa.text[csa[i]])
-            {
-                (*BSa)[i] = 1;
-                ABC->push_back(csa.text[csa[i]]);
-            }
-            if (eval != csa.bwt[i])
-            {
-                (*Bc)[i] = 1;
-                Cr->push_back(csa.bwt[i]);
-                eval = csa.bwt[i];
-                pointer = find(Cr->begin(), Cr->end(), csa.bwt[i]);
-                temp = distance(Cr->begin(), pointer);
-                if (temp_AR.size() > temp)
-                {
-                    Ar->push_back(temp_AR[temp]);
-                    temp_AR[temp] += counter;
-                }
-                else
-                {
-                    Ar->push_back(0);
-                    temp_AR.push_back(counter);
-                }
-                counter = 0;
-            }
-            eval = csa.bwt[i];
-            eval2 = csa.text[csa[i]];
-            counter++;
+            (*BSa)[i] = 1;
+            ABC->push_back(csa.text[csa[i]]);
         }
+        if (eval != csa.bwt[i])
+        {
+            (*Bc)[i] = 1;
+            Cr->push_back(csa.bwt[i]);
+            eval = csa.bwt[i];
+            pointer = find(Cr->begin(), Cr->end(), csa.bwt[i]);
+            temp = distance(Cr->begin(), pointer);
+            if (temp_AR.size() > temp)
+            {
+                Ar->push_back(temp_AR[temp]);
+                temp_AR[temp] += counter;
+            }
+            else
+            {
+                Ar->push_back(0);
+                temp_AR.push_back(counter);
+            }
+            counter = 0;
+        }
+        eval = csa.bwt[i];
+        eval2 = csa.text[csa[i]];
+        counter++;
     }
-    SABinarySearchPSI(P, Psi, BSa, ABC, Sp, Ep);
-    cout << Sp << " " << Ep << endl;
-    BackwardLF(P, Psi, BSa, ABC, Sp, Ep);
-    cout << Sp << " " << Ep;
+    ofstream Resultados;
+    double promPsi = 0;
+    double promLF = 0;
+    Resultados.open("Resultados.csv", ios::app);
+    Resultados << "Largo palabra,T promedio Busqueda Binaria,T promedio BackWardSearch";
+    for (int i = 0; i < 10; i++)
+    {
+        testing(i, Psi, BSa, ABC, Sp, Ep, promPsi, promLF);
+        Resultados << i << "," << promPsi << "," << promLF << "\n";
+    }
+    Resultados.close();
 }
