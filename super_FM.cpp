@@ -27,7 +27,7 @@ char comparePWithSuffix(int i, string P, int *PSI, bit_vector *BSa, vector<char>
     return '=';
 }
 
-void SABinarySearchPSI(string P, int *PSI, bit_vector *BSa, vector<char> *Chars,int &Sp,int &Ep)
+void SABinarySearchPSI(string P, int *PSI, bit_vector *BSa, vector<char> *Chars, int &Sp, int &Ep)
 {
     //n es igual al largo del bitvector
     int b = 0;
@@ -57,38 +57,44 @@ void SABinarySearchPSI(string P, int *PSI, bit_vector *BSa, vector<char> *Chars,
     Sp = b;
     Ep = e;
 }
-
-void BackwardLF(string P,int* LF,bit_vector *BSa, vector<char> *Chars,int &Sp,int &Ep){
-    int m,r,b,e,k;
+void BackwardLF(string P, int *LF, bit_vector *BSa, vector<char> *Chars, int &Sp, int &Ep)
+{
+    int m, r, b, e, j, k;
     m = P.length();
-    bit_vector::select_1_type Bc_Sel1(&Bc);
-    rank_support_v<1> rankBc_1(&Bc);
-    r = find(Chars,Chars.length(),P[m-1]);
+    vector<char>::iterator pointer = find(Chars->begin(), Chars->end(), P[m - 1]);
+    bit_vector::select_1_type Bc_Sel1(&(*BSa));
+    rank_support_v<1> rankBc_1(&(*BSa));
+    r = distance(Chars->begin(),pointer);
     b = Bc_Sel1(r);
-    e = Bc_Sel1(r+1)-1;
-    for(int i=m; i > 2; i--){
+    e = Bc_Sel1(r + 1) - 1;
+    for (int i = m; i > 2; i--)
+    {
         k = b;
-        j = LF(k);
-        while(Chars[rankBc_1(j)]!=P[i-1] and k<=e){
-            k = k+1;
-            j = LF(k);
+        j = LF[k];
+        while ((*Chars)[rankBc_1(j)] != P[i - 1] and k <= e)
+        {
+            k = k + 1;
+            j = LF[k];
         }
         b = k;
-        *Sp = k;
         k = e;
-        j = LF(k);
-        while(Chars[rankBc_1(j)]!=P[i-1] and k>=b){
-            k = k-1;
-            j = LF(k);
+        j = LF[k];
+        while ((*Chars)[rankBc_1(j)] != P[i - 1] and k >= b)
+        {
+            k = k - 1;
+            j = LF[k];
         }
         e = k;
-        *Ep = k;
-        if(b<=e){
-            *Sp = LF(b);
-            *Ep = LF(e);
+        if (b <= e)
+        {
+            Sp = LF[b];
+            Ep = LF[e];
         }
     }
+    Sp = b;
+    Ep = e;
 }
+
 int main()
 {
     bit_vector *Bc;    //Bit vector de cambio de letras
@@ -96,68 +102,72 @@ int main()
     vector<char> *Cr;  //vector de letras por run
     vector<char> *ABC; //vector de alfabeto
     vector<int> *Ar;   //Arreglo de runs acumulados
-    int Sp = 0;       //Start point
-    int Ep = 0;       //End point
+    int Sp = 0;        //Start point
+    int Ep = 0;        //End point
     int *Psi;
     int *LastF;
-    string file = "LolTest.txt";
+    string file = "world_leaders";
     //store_to_file((const char*)v.c_str(), file);
-    cout << "---------" << endl;
-    cout << util::file_size(file) << endl;
-    cout << "---------" << endl;
-    cout << "--------- construct csa_wt<> ----------" << endl;
-    csa_wt<> csa;
-    Cr = new vector<char>;
-    Ar = new vector<int>;
-    ABC = new vector<char>;
-    char eval;
-    char eval2;
-    vector<int> temp_AR;
-    int counter = 0;
-    int temp = 0;
-    vector<char>::iterator pointer;
-    construct(csa, file, 1);
-    cout << "csa.size()=" << csa.size() << endl;
-    Psi = new int[csa.size()];
-    LastF = new int[csa.size()];
-    eval = csa.bwt[0];
-    eval2 = csa.text[csa[0]];
-    Cr->push_back(csa.bwt[0]);
-    Bc = new bit_vector(csa.size(), 0);
-    BSa = new bit_vector(csa.size(), 0);
-    for (size_t i = 0; i < csa.size(); ++i)
     {
-        Psi[i] = csa.psi[i];
-        LastF[i] = csa.lf[i];
-        if (eval2 != csa.text[csa[i]])
+        cout << "---------" << endl;
+        cout << util::file_size(file) << endl;
+        cout << "---------" << endl;
+        cout << "--------- construct csa_wt<> ----------" << endl;
+        csa_wt<> csa;
+        Cr = new vector<char>;
+        Ar = new vector<int>;
+        ABC = new vector<char>;
+        char eval;
+        char eval2;
+        vector<int> temp_AR;
+        int counter = 0;
+        int temp = 0;
+        vector<char>::iterator pointer;
+        construct(csa, file, 1);
+        cout << "csa.size()=" << csa.size() << endl;
+        Psi = new int[csa.size()];
+        LastF = new int[csa.size()];
+        eval = csa.bwt[0];
+        eval2 = csa.text[csa[0]];
+        Cr->push_back(csa.bwt[0]);
+        Bc = new bit_vector(csa.size(), 0);
+        BSa = new bit_vector(csa.size(), 0);
+        for (size_t i = 0; i < csa.size(); ++i)
         {
-            (*BSa)[i] = 1;
-            ABC->push_back(csa.text[csa[i]]);
-        }
-        if (eval != csa.bwt[i])
-        {
-            (*Bc)[i] = 1;
-            Cr->push_back(csa.bwt[i]);
+            Psi[i] = csa.psi[i];
+            LastF[i] = csa.lf[i];
+            if (eval2 != csa.text[csa[i]])
+            {
+                (*BSa)[i] = 1;
+                ABC->push_back(csa.text[csa[i]]);
+            }
+            if (eval != csa.bwt[i])
+            {
+                (*Bc)[i] = 1;
+                Cr->push_back(csa.bwt[i]);
+                eval = csa.bwt[i];
+                pointer = find(Cr->begin(), Cr->end(), csa.bwt[i]);
+                temp = distance(Cr->begin(), pointer);
+                if (temp_AR.size() > temp)
+                {
+                    Ar->push_back(temp_AR[temp]);
+                    temp_AR[temp] += counter;
+                }
+                else
+                {
+                    Ar->push_back(0);
+                    temp_AR.push_back(counter);
+                }
+                counter = 0;
+            }
             eval = csa.bwt[i];
-            pointer = find(Cr->begin(), Cr->end(), csa.bwt[i]);
-            temp = distance(Cr->begin(), pointer);
-            if (temp_AR.size() > temp)
-            {
-                Ar->push_back(temp_AR[temp]);
-                temp_AR[temp] += counter;
-            }
-            else
-            {
-                Ar->push_back(0);
-                temp_AR.push_back(counter);
-            }
-            counter = 0;
+            eval2 = csa.text[csa[i]];
+            counter++;
         }
-        eval = csa.bwt[i];
-        eval2 = csa.text[csa[i]];
-        counter++;
     }
-    string P = "sal";
-    SABinarySearchPSI(P, Psi, BSa, ABC,Sp,Ep);
+    string P = "Donal Trump";
+    SABinarySearchPSI(P, Psi, BSa, ABC, Sp, Ep);
+    cout << Sp << " " << Ep << endl;
+    BackwardLF(P, Psi, BSa, ABC, Sp, Ep);
     cout << Sp << " " << Ep;
 }
