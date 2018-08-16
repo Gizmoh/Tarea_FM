@@ -9,11 +9,20 @@ using namespace std;
 using namespace std::chrono;
 using timer = std::chrono::high_resolution_clock;
 
-/*int LF(){
 
+int LF(int pos,vector<int> Ar,vector<int> Acum,bit_vector Bc,size_t rankBc, size_t selBc, vector<char> Cr,int LF[]){
+    vector<char>::iterator pointer = find(Cr.begin(),Cr.end(),Cr[rankBc]);
+    int temp = distance(Cr.begin(),pointer);
+    int Ari = Ar[rankBc];
+    int output = Acum[temp] + Ari + 1 + pos - selBc;
+    cout << temp << " " << Cr[temp] << endl;
+    //cout << LF[pos] << " " << output << " " << Ari << " " << pos << " " << Ar[rankBc] << " " << Acum[temp] <<endl;
+    return 0;
 }
 
-void comparePWithSuffix(i,P,PSI,bit_vector Bc,char []Chars){}
+/*
+void comparePWithSuffix(string P,int PSI[],bit_vector Bc,char []Chars){}
+
 
 void SABinarySearchPSI(P,PSI,bit_vector Bc,char []Chars,int *Sp,int *Ep){
     //n es igual al largo del bitvector
@@ -70,11 +79,15 @@ void BackwardLF(P,LF,bit_vector Bc, char []Chars,int *Sp,int *Ep){
 */
 int main()
 {
+    bit_vector *BSa; //Bit vector de cambio de letras en SA
     bit_vector *Bc; //Bit vector de cambio de letras
     vector<char> * Cr;  //vector de letras por run
-    vector<int> * Ar;   //Arreglo de runs acumulados
+    vector<int> * Ar; //vector de letras acumuladas por run
+    vector<int> * C;   //Arreglo de runs acumulados
+    vector<char> * Z; //Vector de alfabeto
     int * Psi;
-    string file = "Test.txt";
+    int * LastF;
+    string file = "LolTest.txt";
     //store_to_file((const char*)v.c_str(), file);
     cout<<"---------"<<endl;
     cout << util::file_size(file) << endl;
@@ -84,7 +97,10 @@ int main()
         csa_wt<> csa;
         Cr = new vector<char>;
         Ar = new vector<int>;
+        C = new vector<int>;
+        Z = new vector<char>;
         char eval;
+        char eval2;
         vector<int> temp_AR;
         int counter = 0;
         int temp = 0;
@@ -92,11 +108,22 @@ int main()
         construct(csa, file, 1);
         cout << "csa.size()="<<csa.size()<<endl;
         Psi = new int [csa.size()];
+        LastF = new int[csa.size()];
         eval = csa.bwt[0];
+        eval2 = csa.text[0];
         Cr->push_back(csa.bwt[0]);
         Bc = new bit_vector(csa.size(),0);
+        BSa = new bit_vector(csa.size(),0);
+        for(size_t i = 0; i < csa.C.size(); i++){
+            C->push_back(csa.C[i]);
+        }
         for (size_t i=0; i < csa.size(); ++i) {
             Psi[i] = csa.psi[i];
+            LastF[i] = csa.lf[i];
+            if(eval2 != csa.text[csa[i]]){
+                (*BSa)[i] = 1;
+                Z->push_back(csa.text[csa[i]]);
+            }
             if(eval!=csa.bwt[i]){
                 (*Bc)[i] = 1;
                 Cr->push_back(csa.bwt[i]);
@@ -112,15 +139,16 @@ int main()
                     temp_AR.push_back(counter);
                 }
                 counter = 0;
-
             }
             eval = csa.bwt[i];
+            eval2 = csa.text[csa[i]];
             counter++;
-        }/*
-        cout << endl;
-        for (size_t i=0; i < csa.size(); ++i) {
-            cout << csa.lf[i] << " ";
         }
-        cout << endl;*/
+    }
+    {//En este scope se realizaran las pruebas.
+        rank_support_v<1> rankBc (&*Bc);
+        bit_vector::select_1_type selBc (&*Bc);
+        rank_support_v<1> rankBSa (&*BSa);
+        }
     }
 }
