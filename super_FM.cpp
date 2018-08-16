@@ -9,7 +9,6 @@ using namespace std;
 using namespace std::chrono;
 using timer = std::chrono::high_resolution_clock;
 
-<<<<<<< HEAD
 char comparePWithSuffix(int i, string P, int *PSI, bit_vector *BSa, vector<char> *Chars)
 {
     rank_support_v<1> rankBSa(&(*BSa));
@@ -30,24 +29,6 @@ char comparePWithSuffix(int i, string P, int *PSI, bit_vector *BSa, vector<char>
 
 void SABinarySearchPSI(string P, int *PSI, bit_vector *BSa, vector<char> *Chars, int &Sp, int &Ep)
 {
-=======
-
-int LF(int pos,vector<int> Ar,vector<int> Acum,bit_vector Bc,size_t rankBc, size_t selBc, vector<char> Cr,int LF[]){
-    vector<char>::iterator pointer = find(Cr.begin(),Cr.end(),Cr[rankBc]);
-    int temp = distance(Cr.begin(),pointer);
-    int Ari = Ar[rankBc];
-    int output = Acum[temp] + Ari + 1 + pos - selBc;
-    cout << temp << " " << Cr[temp] << endl;
-    //cout << LF[pos] << " " << output << " " << Ari << " " << pos << " " << Ar[rankBc] << " " << Acum[temp] <<endl;
-    return 0;
-}
-
-/*
-void comparePWithSuffix(string P,int PSI[],bit_vector Bc,char []Chars){}
-
-
-void SABinarySearchPSI(P,PSI,bit_vector Bc,char []Chars,int *Sp,int *Ep){
->>>>>>> 6a4bf32ff93b13ab824d462274a4ca60fd51608c
     //n es igual al largo del bitvector
     int b = 0;
     int t = 0;
@@ -116,7 +97,6 @@ void BackwardLF(string P, int *LF, bit_vector *BSa, vector<char> *Chars, int &Sp
 
 int main()
 {
-<<<<<<< HEAD
     bit_vector *Bc;    //Bit vector de cambio de letras
     bit_vector *BSa;   //Bit vector de SA
     vector<char> *Cr;  //vector de letras por run
@@ -127,17 +107,6 @@ int main()
     int *Psi;
     int *LastF;
     string file = "world_leaders";
-=======
-    bit_vector *BSa; //Bit vector de cambio de letras en SA
-    bit_vector *Bc; //Bit vector de cambio de letras
-    vector<char> * Cr;  //vector de letras por run
-    vector<int> * Ar; //vector de letras acumuladas por run
-    vector<int> * C;   //Arreglo de runs acumulados
-    vector<char> * Z; //Vector de alfabeto
-    int * Psi;
-    int * LastF;
-    string file = "LolTest.txt";
->>>>>>> 6a4bf32ff93b13ab824d462274a4ca60fd51608c
     //store_to_file((const char*)v.c_str(), file);
     {
         cout << "---------" << endl;
@@ -147,12 +116,7 @@ int main()
         csa_wt<> csa;
         Cr = new vector<char>;
         Ar = new vector<int>;
-<<<<<<< HEAD
         ABC = new vector<char>;
-=======
-        C = new vector<int>;
-        Z = new vector<char>;
->>>>>>> 6a4bf32ff93b13ab824d462274a4ca60fd51608c
         char eval;
         char eval2;
         vector<int> temp_AR;
@@ -160,7 +124,6 @@ int main()
         int temp = 0;
         vector<char>::iterator pointer;
         construct(csa, file, 1);
-<<<<<<< HEAD
         cout << "csa.size()=" << csa.size() << endl;
         Psi = new int[csa.size()];
         LastF = new int[csa.size()];
@@ -180,27 +143,6 @@ int main()
             }
             if (eval != csa.bwt[i])
             {
-=======
-        cout << "csa.size()="<<csa.size()<<endl;
-        Psi = new int [csa.size()];
-        LastF = new int[csa.size()];
-        eval = csa.bwt[0];
-        eval2 = csa.text[0];
-        Cr->push_back(csa.bwt[0]);
-        Bc = new bit_vector(csa.size(),0);
-        BSa = new bit_vector(csa.size(),0);
-        for(size_t i = 0; i < csa.C.size(); i++){
-            C->push_back(csa.C[i]);
-        }
-        for (size_t i=0; i < csa.size(); ++i) {
-            Psi[i] = csa.psi[i];
-            LastF[i] = csa.lf[i];
-            if(eval2 != csa.text[csa[i]]){
-                (*BSa)[i] = 1;
-                Z->push_back(csa.text[csa[i]]);
-            }
-            if(eval!=csa.bwt[i]){
->>>>>>> 6a4bf32ff93b13ab824d462274a4ca60fd51608c
                 (*Bc)[i] = 1;
                 Cr->push_back(csa.bwt[i]);
                 eval = csa.bwt[i];
@@ -222,15 +164,6 @@ int main()
             eval2 = csa.text[csa[i]];
             counter++;
         }
-<<<<<<< HEAD
-=======
-    }
-    {//En este scope se realizaran las pruebas.
-        rank_support_v<1> rankBc (&*Bc);
-        bit_vector::select_1_type selBc (&*Bc);
-        rank_support_v<1> rankBSa (&*BSa);
-        }
->>>>>>> 6a4bf32ff93b13ab824d462274a4ca60fd51608c
     }
     string P = "Donal Trump";
     SABinarySearchPSI(P, Psi, BSa, ABC, Sp, Ep);
