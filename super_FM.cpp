@@ -176,7 +176,6 @@ int main()
             counter++;
         }
     }
-    string P = "Donal Trump";
     SABinarySearchPSI(P, Psi, BSa, ABC, Sp, Ep);
     cout << Sp << " " << Ep << endl;
     BackwardLF(P, Psi, BSa, ABC, Sp, Ep);
