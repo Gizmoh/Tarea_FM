@@ -29,7 +29,8 @@ char comparePWithSuffix(int i, string P, int *PSI, bit_vector *BSa, vector<char>
     char c;
     while (j < P.length())
     {
-        c = (*Chars)[rankBSa(i)];
+        if(i!=0)c = (*Chars)[rankBSa(i)];
+        else c=0;
         if (P[j] < c)
             return '<';
         if (P[j] > c)
@@ -146,7 +147,7 @@ int main()
     int *Psi;
     int *LastF;
     int sizeofArray = 0;
-    string file = "world_leaders";
+    string file = "Escherichia_Coli";
     Cr = new vector<char>;
     Ar = new vector<int>;
     ABC = new vector<char>;
@@ -203,7 +204,7 @@ int main()
     cout << "Empieza testing" << endl;
     ofstream Resultados;
     double promPsi = 0;
-    double promLF = 0;/*
+    double promLF = 0;
     Resultados.open("Resultados.csv", ios::trunc);
     Resultados << "Largo palabra,T promedio Busqueda Binaria,T promedio BackWardSearch,\n";
     for (int i = 2; i < 30; i++)
@@ -211,7 +212,7 @@ int main()
         testing(i, Psi, BSa, ABC, Sp, Ep, promPsi, promLF);
         Resultados << i << "," << promPsi << "," << promLF << "\n";
     }
-    Resultados.close();*/
+    Resultados.close();
     bit_vector::select_1_type Bc_Sel1(&(*BSa));
     rank_support_v<1> rankBc_1(&(*BSa));
     cout << "Memoria usada: "<< endl;
