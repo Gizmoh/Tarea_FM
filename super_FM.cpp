@@ -146,7 +146,7 @@ int main()
     int *Psi;
     int *LastF;
     int sizeofArray = 0;
-    string file = "cere";
+    string file = "world_leaders";
     Cr = new vector<char>;
     Ar = new vector<int>;
     ABC = new vector<char>;
