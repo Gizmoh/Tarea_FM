@@ -2,12 +2,14 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include <sdsl/construct.hpp>
+#include <math.h>
+#include <climits>
 
 using namespace sdsl;
 using namespace std;
 using namespace std::chrono;
-using timer = std::chrono::high_resolution_clock;
 
 /*
 int LF(int pos,vector<int> Ar,vector<int> Acum,bit_vector Bc,size_t rankBc, size_t selBc, vector<char> Cr,int LF[]){
@@ -75,8 +77,9 @@ void BackwardLF(string P, int *LF, bit_vector *BSa, vector<char> *Chars, int &Sp
     vector<char>::iterator pointer = find(Chars->begin(), Chars->end(), P[m - 1]);
     bit_vector::select_1_type Bc_Sel1(&(*BSa));
     rank_support_v<1> rankBc_1(&(*BSa));
-    r = distance(Chars->begin(),pointer);
-    b = Bc_Sel1(r);
+    r = distance(Chars->begin(), pointer);
+    if(r!=0)b = Bc_Sel1(r);
+    else b=0;
     e = Bc_Sel1(r + 1) - 1;
     for (int i = m; i > 2; i--)
     {
@@ -105,6 +108,31 @@ void BackwardLF(string P, int *LF, bit_vector *BSa, vector<char> *Chars, int &Sp
     Sp = b;
     Ep = e;
 }
+void testing(int largo, int *PSI, bit_vector *BSa, vector<char> *ABC, int &Sp, int &Ep, double &promPsi, double &promLF)
+{
+    string palabra;
+    int aux = ABC->size() - 1;
+    int aux2;
+    for (int i = 0; i < 100; i++)
+    {
+        palabra = "";
+        while (palabra.length() < largo)
+        {
+            aux2 = rand() % aux;
+            palabra.push_back((*ABC)[aux2]);
+        }
+        auto start = high_resolution_clock::now();
+        SABinarySearchPSI(palabra, PSI, BSa, ABC, Sp, Ep);
+        auto stop = high_resolution_clock::now();
+        promPsi += duration_cast<milliseconds>(stop-start).count()/(double)1000;
+        start = high_resolution_clock::now();
+        BackwardLF(palabra, PSI, BSa, ABC, Sp, Ep);
+        stop = high_resolution_clock::now();
+        promLF += duration_cast<milliseconds>(stop-start).count()/(double)1000;
+    }
+    promPsi = (promPsi / 100);
+    promLF = (promLF / 100);
+}
 
 int main()
 {
@@ -117,27 +145,23 @@ int main()
     int Ep = 0;        //End point
     int *Psi;
     int *LastF;
+    int sizeofArray = 0;
     string file = "world_leaders";
-    //store_to_file((const char*)v.c_str(), file);
+    Cr = new vector<char>;
+    Ar = new vector<int>;
+    ABC = new vector<char>;
+    char eval;
+    char eval2;
     {
-        cout << "---------" << endl;
-        cout << util::file_size(file) << endl;
-        cout << "---------" << endl;
-        cout << "--------- construct csa_wt<> ----------" << endl;
         csa_wt<> csa;
-        Cr = new vector<char>;
-        Ar = new vector<int>;
-        ABC = new vector<char>;
-        char eval;
-        char eval2;
         vector<int> temp_AR;
         int counter = 0;
         int temp = 0;
         vector<char>::iterator pointer;
         construct(csa, file, 1);
-        cout << "csa.size()=" << csa.size() << endl;
         Psi = new int[csa.size()];
         LastF = new int[csa.size()];
+        sizeofArray = csa.size();
         eval = csa.bwt[0];
         eval2 = csa.text[csa[0]];
         Cr->push_back(csa.bwt[0]);
@@ -176,9 +200,28 @@ int main()
             counter++;
         }
     }
-    string P = "Donal Trump";
-    SABinarySearchPSI(P, Psi, BSa, ABC, Sp, Ep);
-    cout << Sp << " " << Ep << endl;
-    BackwardLF(P, Psi, BSa, ABC, Sp, Ep);
-    cout << Sp << " " << Ep;
+    cout << "Empieza testing" << endl;
+    ofstream Resultados;
+    double promPsi = 0;
+    double promLF = 0;/*
+    Resultados.open("Resultados.csv", ios::trunc);
+    Resultados << "Largo palabra,T promedio Busqueda Binaria,T promedio BackWardSearch,\n";
+    for (int i = 2; i < 30; i++)
+    {
+        testing(i, Psi, BSa, ABC, Sp, Ep, promPsi, promLF);
+        Resultados << i << "," << promPsi << "," << promLF << "\n";
+    }
+    Resultados.close();*/
+    bit_vector::select_1_type Bc_Sel1(&(*BSa));
+    rank_support_v<1> rankBc_1(&(*BSa));
+    cout << "Memoria usada: "<< endl;
+    cout << "Tamaño Archivo original: " << util::file_size(file) << endl;
+    cout << "Bit vector de SA: " << size_in_bytes(*BSa) << endl;
+    cout << "Bit vector de Tbwt: " << size_in_bytes(*Bc) << endl;
+    cout << "Arreglo Ar: " << size_in_bytes(*Ar) << endl;
+    cout << "Arreglo Cr: " << size_in_bytes(*Cr) << endl;
+    cout << "Arreglo alfabeto: " << size_in_bytes(*ABC) << endl;
+    cout << "Arreglo que contiene PSI: " << sizeofArray << endl;
+    cout << "Rank support para bitvector de SA: " << size_in_bytes(rankBc_1) << endl;
+    cout << "Select support para bitvector de SA: " << size_in_bytes(Bc_Sel1) << endl;
 }
