@@ -146,14 +146,14 @@ int main()
     int *Psi;
     int *LastF;
     int sizeofArray = 0;
-    string file = "Super_Test";
-    csa_wt<> csa;
+    string file = "cere";
     Cr = new vector<char>;
     Ar = new vector<int>;
     ABC = new vector<char>;
     char eval;
     char eval2;
     {
+        csa_wt<> csa;
         vector<int> temp_AR;
         int counter = 0;
         int temp = 0;
@@ -215,6 +215,7 @@ int main()
     bit_vector::select_1_type Bc_Sel1(&(*BSa));
     rank_support_v<1> rankBc_1(&(*BSa));
     cout << "Memoria usada: "<< endl;
+    cout << "Tamaño Archivo original: " << util::file_size(file) << endl;
     cout << "Bit vector de SA: " << size_in_bytes(*BSa) << endl;
     cout << "Bit vector de Tbwt: " << size_in_bytes(*Bc) << endl;
     cout << "Arreglo Ar: " << size_in_bytes(*Ar) << endl;
